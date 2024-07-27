@@ -1,6 +1,6 @@
 node_modules/
 *.env
-.cache
+.cache/
 .eslintrc.json
- .gitignore
-  .prettierrc
+.gitignore
+.prettierrc

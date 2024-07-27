@@ -1,4 +1,3 @@
-const { title } = require('process');
 const AppError = require('./../utils/appError');
 
 // const handleCastErrorDB = (err) => {
@@ -37,7 +36,7 @@ const sendErrorDev = (err, req, res) => {
     });
   }
   //B.RENDERED WEBSITE
-  console.error('Error', err);
+  // console.error('Error', err);
   return res.status(err.statusCode).render('error', {
     title: 'Something went wrong!',
     msg: err.message,

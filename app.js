@@ -7,7 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
-
+const compression = require('compression');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
@@ -35,39 +35,10 @@ app.use(
         scriptSrc: ["'self'", 'https://unpkg.com', 'https://js.stripe.com'],
         connectSrc: [
           "'self'",
-          'ws://127.0.0.1:54939',
-          'ws://127.0.0.1:62037',
-          'ws://127.0.0.1:50916',
-          'ws://127.0.0.1:54939',
-          'ws://127.0.0.1:62037',
-          'ws://127.0.0.1:50916',
-          'ws://127.0.0.1:63577',
-          'ws://127.0.0.1:54939',
-          'ws://127.0.0.1:62037',
-          'ws://127.0.0.1:50916',
-          'ws://127.0.0.1:63577',
-          'ws://127.0.0.1:60092',
-          'ws://127.0.0.1:54939',
-          'ws://127.0.0.1:62037',
-          'ws://127.0.0.1:50916',
-          'ws://127.0.0.1:63577',
-          'ws://127.0.0.1:60009',
-          'ws://127.0.0.1:54939',
-          'ws://127.0.0.1:62037',
-          'ws://127.0.0.1:50916',
-          'ws://127.0.0.1:63577',
-          'ws://127.0.0.1:60092',
-          'ws://127.0.0.1:60009',
-          'ws://127.0.0.1:49598',
-          'ws://127.0.0.1:54939',
-          'ws://127.0.0.1:62037',
-          'ws://127.0.0.1:50916',
-          'ws://127.0.0.1:63577',
-          'ws://127.0.0.1:60092',
-          'ws://127.0.0.1:60009',
-          'https://js.stripe.com', // Add the new WebSocket connection here
+          'ws://127.0.0.1:*', // Use a wildcard to match any port
+          'https://js.stripe.com',
         ],
-        frameSrc: ["'self'", 'https://js.stripe.com'], // Add your WebSocket URL here
+        frameSrc: ["'self'", 'https://js.stripe.com'],
         imgSrc: [
           "'self'",
           'data:',
@@ -117,6 +88,8 @@ app.use(
     ],
   }),
 );
+
+app.use(compression);
 
 // Test middleware
 app.use((req, res, next) => {
