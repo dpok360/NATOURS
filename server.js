@@ -27,9 +27,9 @@ mongoose
   });
 
 //4).START SERVER
-const port = process.env.PORT || 3001;
-const server = app.listen(port, () => {
-  console.log(`app running on port ${port}`);
+// const port = process.env.PORT || 3001;
+const server = app.listen(() => {
+  console.log('app running');
 });
 
 //UNHANDLED REJECTION
