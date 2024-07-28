@@ -31,7 +31,8 @@ export const logout = async () => {
     });
 
     if (res.data.status === 'success') {
-      location.reload(true);
+      // location.reload(true);
+      location.reload();
     }
   } catch (err) {
     console.log(err.response);
