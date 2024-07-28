@@ -41,7 +41,11 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", 'https://unpkg.com', 'https://js.stripe.com'],
-        styleSrc: ["'self'", 'https://unpkg.com'],
+        styleSrc: [
+          "'self'",
+          'https://unpkg.com',
+          'https://fonts.googleapis.com',
+        ],
         connectSrc: [
           "'self'",
           'ws://127.0.0.1:*', // Use a wildcard to match any port
