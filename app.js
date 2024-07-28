@@ -55,7 +55,7 @@ app.use(
           "'self'",
           'ws://127.0.0.1:*', // Use a wildcard to match any port
           'https://js.stripe.com',
-          'wss://natours-deepak.vercel.app:58503',
+          'wss://natours-deepak.vercel.app:*',
         ],
         frameSrc: ["'self'", 'https://js.stripe.com'],
         imgSrc: [
