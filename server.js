@@ -28,12 +28,7 @@ const DB = process.env.DATABASE.replace('<password>', encodedPassword);
 //   .then(() => {
 //     console.log('db connection succesfull');
 //   });
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('DB connection successful!'));
+mongoose.connect(DB).then(() => console.log('DB connection successful!'));
 
 //4).START SERVER
 const port = process.env.PORT || 3000;
