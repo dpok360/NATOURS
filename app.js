@@ -70,6 +70,14 @@ app.use(
   }),
 );
 
+//log the ip
+app.use((req, res, next) => {
+  const clientIp =
+    req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log('Client IP:', clientIp);
+  next();
+});
+
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
