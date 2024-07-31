@@ -46,14 +46,18 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
 const createBookingCheckout = async (session) => {
   try {
     const tour = session.client_reference_id;
+    console.log('Session Data:', session);
     if (!tour) throw new Error('Missing client_reference_id in session.');
     const user = (await User.findOne({ email: session.customer_email })).id;
+    console.log('User ID:', user);
     if (!user) throw new Error('User not found for given customer_email.');
     if (!session.display_items || !session.display_items[0]) {
       throw new Error('display_items is missing or empty.');
     }
     const lineItem = session.line_items[0];
     const price = lineItem.price.unit_amount / 100;
+    console.log('Line Item:', lineItem);
+    console.log('Price:', price);
     await Booking.create({ tour, user, price });
   } catch (error) {
     throw error;
