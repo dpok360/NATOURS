@@ -51,8 +51,12 @@ const createBookingCheckout = async (session) => {
     const user = (await User.findOne({ email: session.customer_email })).id;
     console.log('User ID:', user);
     if (!user) throw new Error('User not found for given customer_email.');
-    if (!session.line_items || !session.line_items[0]) {
-      throw new Error('display_items is missing or empty.');
+    if (
+      !session.line_item_group ||
+      !session.line_item_group.line_items ||
+      !session.line_item_group.line_items[0]
+    ) {
+      throw new Error('line_items is missing or empty.');
     }
     const lineItem = session.line_items[0];
     const price = lineItem.price.unit_amount / 100;
