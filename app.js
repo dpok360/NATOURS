@@ -17,7 +17,6 @@ const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
-const { json } = require('stream/consumers');
 
 const app = express();
 app.enable('trust proxy');
