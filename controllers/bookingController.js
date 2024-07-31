@@ -43,27 +43,71 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   });
 });
 
+// const createBookingCheckout = async (session) => {
+//   try {
+//     const tour = session.client_reference_id;
+//     console.log('Session Data:', session);
+//     if (!tour) throw new Error('Missing client_reference_id in session.');
+//     const user = (await User.findOne({ email: session.customer_email })).id;
+//     console.log('User ID:', user);
+//     if (!user) throw new Error('User not found for given customer_email.');
+//     if (!session.line_items || session.line_items.data.length === 0) {
+//       throw new Error('line_items is missing or empty.');
+//     }
+//     const lineItem = session.line_items.data[0];
+//     const price = lineItem.price.unit_amount / 100;
+//     console.log('Line Item:', lineItem);
+//     console.log('Price:', price);
+//     await Booking.create({ tour, user, price });
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+// exports.webhookCheckout = async (req, res, next) => {
+//   const signature = req.headers['stripe-signature'];
+
+//   let event;
+//   try {
+//     event = stripe.webhooks.constructEvent(
+//       req.body,
+//       signature,
+//       process.env.STRIPE_WEBHOOK_SECRET,
+//     );
+//   } catch (err) {
+//     return res.status(400).send(`webhook error: ${err.message}`);
+//   }
+//   if (event.type === 'checkout.session.completed') {
+//     const sessionId = event.data.object.id;
+//     const session = await stripe.checkout.sessions.retrieve(sessionId);
+//     await createBookingCheckout(session);
+//   }
+//   res.status(200).send({ received: true });
+// };
 const createBookingCheckout = async (session) => {
   try {
     const tour = session.client_reference_id;
     console.log('Session Data:', session);
     if (!tour) throw new Error('Missing client_reference_id in session.');
-    const user = (await User.findOne({ email: session.customer_email })).id;
-    console.log('User ID:', user);
+
+    const user = await User.findOne({ email: session.customer_email });
     if (!user) throw new Error('User not found for given customer_email.');
-    if (
-      !session.line_item_group ||
-      !session.line_item_group.line_items ||
-      !session.line_item_group.line_items[0]
-    ) {
+
+    if (!session.line_items || session.line_items.data.length === 0) {
       throw new Error('line_items is missing or empty.');
     }
-    const lineItem = session.line_items[0];
+
+    const lineItem = session.line_items.data[0];
     const price = lineItem.price.unit_amount / 100;
+
+    console.log('Tour ID:', tour);
+    console.log('User ID:', user.id);
     console.log('Line Item:', lineItem);
     console.log('Price:', price);
-    await Booking.create({ tour, user, price });
+
+    await Booking.create({ tour, user: user.id, price });
   } catch (error) {
+    console.error('Error creating booking:', error);
     throw error;
   }
 };
@@ -79,13 +123,26 @@ exports.webhookCheckout = async (req, res, next) => {
       process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
-    return res.status(400).send(`webhook error: ${err.message}`);
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook error: ${err.message}`);
   }
+
   if (event.type === 'checkout.session.completed') {
     const sessionId = event.data.object.id;
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    await createBookingCheckout(session);
+    try {
+      // Retrieve the session from Stripe
+      const session = await stripe.checkout.sessions.retrieve(sessionId, {
+        expand: ['line_items'], // Ensure line items are included
+      });
+
+      // Pass the full session data to createBookingCheckout
+      await createBookingCheckout(session);
+    } catch (error) {
+      console.error('Error retrieving session or creating booking:', error);
+      return res.status(500).send(`Webhook error: ${error.message}`);
+    }
   }
+
   res.status(200).send({ received: true });
 };
 
