@@ -59,7 +59,8 @@ const createBookingCheckout = async (session) => {
     if (!session.display_items || !session.display_items[0]) {
       throw new Error('display_items is missing or empty.');
     }
-    const price = session.line_items[0].unit_amount / 100;
+    const lineItem = session.line_items[0];
+    const price = lineItem.price.unit_amount / 100;
     await Booking.create({ tour, user, price });
   } catch (error) {
     throw error;
