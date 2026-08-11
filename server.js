@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 dotenv.config();
 //UNCAUGHT EXCEPTION
 process.on('uncaughtException', (err) => {
+  console.error(err);
   console.log('UNCAUGHT EXCEPTION!!!!!     SHUTTING DOWN........');
   console.log(err.name, err.message);
   process.exit(1);
@@ -12,22 +13,22 @@ process.on('uncaughtException', (err) => {
 const app = require('./app');
 
 const encodedPassword = encodeURIComponent(process.env.DATABASE_PASSWORD);
-const DB = process.env.DATABASE.replace('<password>', encodedPassword);
+// const DB = process.env.DATABASE.replace('<password>', encodedPassword);
 
-// const DB = process.env.DATABASE.replace(
-//   '<password>',
-//   process.env.DATABASE_PASSWORD,
-// );
-// mongoose
-//   .connect(DB, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useCreateIndex: true,
-//     useFindAndModify: false,
-//   })
-//   .then(() => {
-//     console.log('db connection succesfull');
-//   });
+const DB = process.env.DATABASE.replace(
+  '<password>',
+  process.env.DATABASE_PASSWORD,
+);
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
+  .then(() => {
+    console.log('db connection succesfull');
+  });
 mongoose.connect(DB).then(() => console.log('DB connection successful!'));
 
 //4).START SERVER
